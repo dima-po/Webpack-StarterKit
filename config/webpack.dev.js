@@ -7,6 +7,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlBeautifyPlugin = require('@sumotto/beautify-html-webpack-plugin');
 const StylelintPlugin = require('stylelint-webpack-plugin');
+const miniSVGDataURI = require('mini-svg-data-uri');
 
 
 // Variables
@@ -26,7 +27,7 @@ module.exports = {
     output: {
         filename: 'js/bundle.js',
         path: PATHS.dist,
-        // publicPath: ''
+        publicPath: ''
     },
 
     devServer: {
@@ -37,8 +38,8 @@ module.exports = {
         port: 4000,
         client: {
             overlay: {
-                warnings: true,
-                errors: true,
+                warnings: false,
+                errors: false,
             }
         },
         hot: true
@@ -71,9 +72,9 @@ module.exports = {
                             publicPath: '../'
                         }
                     },
-                    
+
                     'css-loader',
-                    
+
                     {
                         loader: 'postcss-loader',
                         options: {
@@ -101,11 +102,22 @@ module.exports = {
             },
 
             {
-                test: /\.(png|jpe?g|gif|svg|webp)$/i,
+                test: /\.(png|jpeg|jpg|gif|svg|webp)$/i,
                 type: 'asset/resource',
                 generator: {
                     filename: 'images/[name][ext]'
                 }
+            },
+
+            {
+              test: /\.svg$/,
+              type: 'asset',
+              generator: {
+                dataUrl(content) {
+                  content = content.toString();
+                  return miniSVGDataURI(content);
+                }
+              },
             },
 
             {
@@ -121,7 +133,7 @@ module.exports = {
     resolve: {
         alias: {
             '~': PATHS.src,
-            'Blocks': `${PATHS.src}/views/modules`
+            '~modules': `${PATHS.src}/views/modules`
         }
     },
 
@@ -142,12 +154,10 @@ module.exports = {
                 title: false,
                 use: true,
                 symbol: true,
-                // view: '-fragment'
             }
             },
             styles: {
             filename: `${PATHS.src}/styles/base/_sprites.scss`,
-            // format: 'fragment',
             variables: {
                 sprites: 'sprite',
                 sizes: 'size'
@@ -162,6 +172,7 @@ module.exports = {
         new CopyWebpackPlugin({
             patterns: [
                 { from: `${PATHS.src}/static`, to: '' },
+                // { from: `${PATHS.src}/images`, to: 'images' },
             ]
         }),
 
