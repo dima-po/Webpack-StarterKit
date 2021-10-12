@@ -22,7 +22,7 @@ const PAGES = fs.readdirSync(PAGES_DIR).filter(fileName => fileName.endsWith('.p
 // Main config
 module.exports = {
     mode: 'development',
-    devtool: 'source-map',
+    devtool: 'eval-source-map',
     entry: PATHS.src,
     output: {
         filename: 'js/bundle.js',
@@ -74,29 +74,7 @@ module.exports = {
                     },
 
                     'css-loader',
-
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            postcssOptions: {
-                                plugins: [
-                                    // "postcss-preset-env",
-                                    // require('postcss-preset-env'),
-                                    // require('css-mqpacker'),
-                                    // require('cssnano')({
-                                    // preset: [
-                                    //     'default', {
-                                    //     discardComments: {
-                                    //         removeAll: true
-                                    //     }
-                                    //     }
-                                    // ]
-                                    // })
-                                ],
-                            },
-                        }
-                    },
-
+                    'postcss-loader',
                     'sass-loader'
                 ],
             },
@@ -172,7 +150,7 @@ module.exports = {
         new CopyWebpackPlugin({
             patterns: [
                 { from: `${PATHS.src}/static`, to: '' },
-                // { from: `${PATHS.src}/images`, to: 'images' },
+                { from: `${PATHS.src}/images`, to: 'images' },
             ]
         }),
 
