@@ -6,7 +6,6 @@ const SVGSpritemapPlugin = require('svg-spritemap-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlBeautifyPlugin = require('@sumotto/beautify-html-webpack-plugin');
-const StylelintPlugin = require('stylelint-webpack-plugin');
 const miniSVGDataURI = require('mini-svg-data-uri');
 
 
@@ -168,7 +167,5 @@ module.exports = {
             preserve_newlines: true,
             unformatted: ['p', 'i', 'b', 'span']
         }),
-
-        new StylelintPlugin()
     ]
 };
