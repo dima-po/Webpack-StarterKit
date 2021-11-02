@@ -7,6 +7,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlBeautifyPlugin = require('@sumotto/beautify-html-webpack-plugin');
 const miniSVGDataURI = require('mini-svg-data-uri');
+const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 
 
 // Variables
@@ -167,5 +168,15 @@ module.exports = {
             preserve_newlines: true,
             unformatted: ['p', 'i', 'b', 'span']
         }),
+
+        new ImageMinimizerPlugin({
+          minimizerOptions: {
+            plugins: [
+              ["gifsicle", { interlaced: true }],
+              ["jpegtran", { progressive: true }],
+              ["optipng", { optimizationLevel: 5 }],
+            ]
+          }
+        })
     ]
 };
