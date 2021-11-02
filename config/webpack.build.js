@@ -8,6 +8,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlBeautifyPlugin = require('@sumotto/beautify-html-webpack-plugin');
 const miniSVGDataURI = require('mini-svg-data-uri');
 const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
+const CssMinimizerPlugin= require("css-minimizer-webpack-plugin");
 
 
 // Variables
@@ -22,6 +23,16 @@ const PAGES = fs.readdirSync(PAGES_DIR).filter(fileName => fileName.endsWith('.p
 // Main config
 module.exports = {
     mode: 'production',
+    output: {
+      filename: 'js/bundle.js',
+      path: PATHS.dist,
+      publicPath: ''
+    },
+    optimization: {
+      minimizer: [
+        new CssMinimizerPlugin(),
+      ]
+    },
     module: {
         rules: [
             {
@@ -51,29 +62,7 @@ module.exports = {
                     },
 
                     'css-loader',
-
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            postcssOptions: {
-                                plugins: [
-                                    "postcss-preset-env",
-                                    require('postcss-preset-env'),
-                                    require('css-mqpacker'),
-                                    require('cssnano')({
-                                    preset: [
-                                        'default', {
-                                        discardComments: {
-                                            removeAll: true
-                                        }
-                                        }
-                                    ]
-                                    })
-                                ],
-                            },
-                        }
-                    },
-
+                    'postcss-loader',
                     'sass-loader'
                 ],
             },
@@ -117,6 +106,18 @@ module.exports = {
     plugins: [
         new CleanWebpackPlugin(),
 
+        // new ImageMinimizerPlugin({
+        //   test: /\.(jpe?g|png|gif|tif|webp|svg|avif)$/i,
+        //   minimizerOptions: {
+        //     plugins: [
+        //       ["gifsicle", { interlaced: true }],
+        //       ["jpegtran", { progressive: true }],
+        //       ["optipng", { optimizationLevel: 3 }],
+        //       ["mozjpeg", { quality: 60 }],
+        //     ]
+        //   }
+        // }),
+
         new SVGSpritemapPlugin(`${PATHS.src}/images/sprites/*.svg`,
         {
             output: {
@@ -143,7 +144,7 @@ module.exports = {
         }),
 
         new MiniCssExtractPlugin({
-            filename: 'css/[name].css'
+            filename: 'css/[name].min.css'
         }),
 
         new CopyWebpackPlugin({
@@ -168,15 +169,5 @@ module.exports = {
             preserve_newlines: true,
             unformatted: ['p', 'i', 'b', 'span']
         }),
-
-        new ImageMinimizerPlugin({
-          minimizerOptions: {
-            plugins: [
-              ["gifsicle", { interlaced: true }],
-              ["jpegtran", { progressive: true }],
-              ["optipng", { optimizationLevel: 5 }],
-            ]
-          }
-        })
     ]
 };
