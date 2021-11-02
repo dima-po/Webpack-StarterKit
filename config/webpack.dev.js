@@ -28,6 +28,7 @@ module.exports = {
         path: PATHS.dist,
         publicPath: ''
     },
+    stats: 'minimal',
 
     devServer: {
         static: {

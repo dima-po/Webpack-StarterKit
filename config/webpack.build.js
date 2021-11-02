@@ -7,8 +7,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlBeautifyPlugin = require('@sumotto/beautify-html-webpack-plugin');
 const miniSVGDataURI = require('mini-svg-data-uri');
-const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 const CssMinimizerPlugin= require("css-minimizer-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
+const ImageminPlugin = require("imagemin-webpack-plugin").default;
+const glob = require("glob");
 
 
 // Variables
@@ -24,13 +26,15 @@ const PAGES = fs.readdirSync(PAGES_DIR).filter(fileName => fileName.endsWith('.p
 module.exports = {
     mode: 'production',
     output: {
-      filename: 'js/bundle.js',
+      filename: 'js/bundle.min.js',
       path: PATHS.dist,
-      publicPath: ''
+      publicPath: '',
+      clean: true
     },
     optimization: {
       minimizer: [
         new CssMinimizerPlugin(),
+        new TerserPlugin()
       ]
     },
     module: {
@@ -104,19 +108,7 @@ module.exports = {
     },
 
     plugins: [
-        new CleanWebpackPlugin(),
-
-        // new ImageMinimizerPlugin({
-        //   test: /\.(jpe?g|png|gif|tif|webp|svg|avif)$/i,
-        //   minimizerOptions: {
-        //     plugins: [
-        //       ["gifsicle", { interlaced: true }],
-        //       ["jpegtran", { progressive: true }],
-        //       ["optipng", { optimizationLevel: 3 }],
-        //       ["mozjpeg", { quality: 60 }],
-        //     ]
-        //   }
-        // }),
+        // new CleanWebpackPlugin(),
 
         new SVGSpritemapPlugin(`${PATHS.src}/images/sprites/*.svg`,
         {
@@ -152,6 +144,10 @@ module.exports = {
                 { from: `${PATHS.src}/static`, to: '' },
                 { from: `${PATHS.src}/images`, to: 'images' },
             ]
+        }),
+
+        new ImageminPlugin({
+          test: /\.(jpe?g|png|gif|webm|svg)$/i
         }),
 
         // Automatic creation any html pages (Don't forget to RERUN dev server)
