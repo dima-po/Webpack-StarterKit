@@ -1,14 +1,22 @@
-@mixin font-face($name, $file, $weight) {
+@mixin font-face($name, $file, $weight, $italic: false) {
   @font-face {
     font-family: "#{$name}";
-    src:  url("../../src/fonts/#{$name}.woff2") format("woff2"),
-      url("../../src/fonts/#{$name}.woff") format("woff");
+    src:  url("../../src/fonts/#{$file}.woff2") format("woff2"),
+          url("../../src/fonts/#{$file}.woff") format("woff");
     font-weight: $weight;
+    font-display: swap;
+
+    @if $italic {
+      font-style: italic;
+    }
+    @else {
+      font-style: normal;
+    }
   }
  }
 
 // @include mq('tablet-wide')
-// A massive time saver! You can just use pixel values but we have some default breakpoints setup that work too, 
+// A massive time saver! You can just use pixel values but we have some default breakpoints setup that work too,
 // another time saver while keeping your breakpoints consistent.
 
 @mixin mq($width, $type: min) {
@@ -25,7 +33,7 @@
   }
 }
 
-// Adding Truncation to an element isn't as simple as it should be, although it is with this handy time saver, 
+// Adding Truncation to an element isn't as simple as it should be, although it is with this handy time saver,
 // meaning when you include the mixin, you only have to specify your boundry with a max width value, happy days!
 
 @mixin truncate($truncation-boundary) {
