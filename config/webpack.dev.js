@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require("fs");
+const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const SVGSpritemapPlugin = require("svg-spritemap-webpack-plugin");
@@ -7,7 +8,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const HtmlBeautifyPlugin = require("@sumotto/beautify-html-webpack-plugin");
 const miniSVGDataURI = require("mini-svg-data-uri");
 const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
-
+const WorkboxWebpackPlugin = require("workbox-webpack-plugin");
 
 // Variables
 const PATHS = {
@@ -21,7 +22,7 @@ const PAGES = fs.readdirSync(PAGES_DIR).filter(fileName => fileName.endsWith(".p
 // Main config
 module.exports = {
   mode: "development",
-  devtool: "source-map",
+  devtool: false,
   entry: PATHS.src,
   output: {
     filename: "js/bundle.js",
@@ -75,7 +76,6 @@ module.exports = {
           },
 
           "css-loader",
-          "postcss-loader",
           "sass-loader"
         ],
       },
@@ -118,6 +118,10 @@ module.exports = {
 
   plugins: [
 
+    new webpack.SourceMapDevToolPlugin({
+      exclude: ["vendor.js", "_libs.scss"],
+    }),
+
     new SVGSpritemapPlugin(`${PATHS.src}/images/sprites/*.svg`,
       {
         output: {
@@ -149,8 +153,18 @@ module.exports = {
 
     new CopyWebpackPlugin({
       patterns: [
-        { from: `${PATHS.src}/static`, to: "" },
-        { from: `${PATHS.src}/images`, to: "images" },
+        { from: `${PATHS.src}/static`, to: "./" },
+        {
+          from: `${PATHS.src}/images`,
+          to: "./images",
+          force: true,
+          info: { minimized: true },
+          globOptions: {
+            ignore: [
+              "**/images/*.webp"
+            ]
+          }
+        },
       ]
     }),
 
@@ -179,5 +193,19 @@ module.exports = {
       preserve_newlines: true,
       unformatted: ["p", "i", "b", "span"]
     }),
+
+    // new WorkboxWebpackPlugin.InjectManifest({
+    //   swSrc: "./src-sw.js",
+    //   swDest: `${PATHS.dist}/sw.js`,
+    //   exclude: [
+    //     /\.map$/,
+    //     /\.js$/,
+    //     /\.mp3$/,
+    //     /manifest$/,
+    //     /\.htaccess$/,
+    //     /service-worker\.js$/,
+    //     /sw\.js$/,
+    //   ],
+    // }),
   ]
 };

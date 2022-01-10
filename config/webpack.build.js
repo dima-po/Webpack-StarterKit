@@ -9,6 +9,8 @@ const miniSVGDataURI = require("mini-svg-data-uri");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
+const WorkboxWebpackPlugin = require("workbox-webpack-plugin");
+
 
 // Variables
 const PATHS = {
@@ -23,19 +25,20 @@ const PAGES = fs.readdirSync(PAGES_DIR).filter(fileName => fileName.endsWith(".p
 // Main config
 module.exports = {
   mode: "production",
-  devtools: false,
+  devtool: false,
   output: {
     filename: "js/bundle.min.js",
     path: PATHS.dist,
-    publicPath: "./",
+    publicPath: "",
     clean: true
   },
+
   optimization: {
     minimizer: [
       new CssMinimizerPlugin(),
       new TerserPlugin(),
-    ]
-  },
+  ]},
+
   module: {
     rules: [
       {
@@ -71,7 +74,10 @@ module.exports = {
 
       {
         test: /\.(png|jpeg|jpg|gif|svg|webp)$/i,
-        type: "asset/resource"
+        type: "asset/resource",
+        generator: {
+          filename: 'images/[name][ext]'
+        }
       },
 
       {
@@ -98,7 +104,7 @@ module.exports = {
   resolve: {
     alias: {
       "~": PATHS.src,
-      "~modules": `${PATHS.src}/views/modules`
+      "~modules": `${PATHS.src}/views/modules`,
     }
   },
 
@@ -136,7 +142,15 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         { from: `${PATHS.src}/static`, to: "" },
-        { from: `${PATHS.src}/images`, to: "images" },
+        {
+          from: `${PATHS.src}/images`,
+          to: "images",
+          globOptions: {
+            ignore: [
+              "**/images/*.webp"
+            ]
+          }
+        },
       ]
     }),
 
@@ -154,8 +168,8 @@ module.exports = {
     new ImageMinimizerPlugin({
       minimizerOptions: {
         plugins: [
-          ["pngquant", { quality: [0.5, 0.65], speed: 5 }],
-          ["mozjpeg", { quality: 65 }],
+          ["imagemin-pngquant", { quality: [0.5, 0.65], speed: 5 }],
+          ["imagemin-mozjpeg", { quality: 65, progressive: true }],
         ],
       },
     }),
@@ -175,5 +189,19 @@ module.exports = {
       preserve_newlines: true,
       unformatted: ["p", "i", "b", "span"]
     }),
+
+    // new WorkboxWebpackPlugin.InjectManifest({
+    //   swSrc: "./src-sw.js",
+    //   swDest: `${PATHS.dist}/sw.js`,
+    //   exclude: [
+    //     /\.map$/,
+    //     /\.js$/,
+    //     /\.mp3$/,
+    //     /manifest$/,
+    //     /\.htaccess$/,
+    //     /service-worker\.js$/,
+    //     /sw\.js$/,
+    //   ],
+    // }),
   ]
 };

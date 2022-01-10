@@ -28,8 +28,11 @@
     "css-minimizer-webpack-plugin": "^3.1.1",
     "html-webpack-plugin": "^5.5.0",
     "image-minimizer-webpack-plugin": "^2.2.0",
+    "imagemin": "^8.0.1",
     "imagemin-gifsicle": "^7.0.0",
+    "imagemin-jpegtran": "^7.0.0",
     "imagemin-mozjpeg": "^9.0.0",
+    "imagemin-optipng": "^8.0.0",
     "imagemin-pngquant": "^9.0.2",
     "imagemin-svgo": "^10.0.0",
     "imagemin-webp": "^6.0.0",
@@ -42,7 +45,7 @@
     "pug-loader": "^2.4.0",
     "sass": "^1.43.4",
     "sass-loader": "^12.3.0",
-    "stylelint": "^14.0.1",
+    "stylelint": "^14.1.0",
     "stylelint-config-htmlacademy": "^0.1.10",
     "stylelint-scss": "^4.0.0",
     "stylelint-webpack-plugin": "^3.1.0",
@@ -50,7 +53,8 @@
     "terser-webpack-plugin": "^5.2.4",
     "webpack": "^5.61.0",
     "webpack-cli": "^4.9.1",
-    "webpack-dev-server": "^4.4.0"
+    "webpack-dev-server": "^4.4.0",
+    "workbox-webpack-plugin": "^6.4.2"
   },
   "dependencies": {
     "normalize.css": "^8.0.1"
