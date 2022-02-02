@@ -37,6 +37,37 @@ module.exports = {
     minimizer: [
       new CssMinimizerPlugin(),
       new TerserPlugin(),
+      new ImageMinimizerPlugin({
+        deleteOriginalAssets: false,
+        minimizer: {
+          implementation: ImageMinimizerPlugin.imageminMinify,
+          options: {
+            plugins: [
+              "imagemin-gifsicle",
+              "imagemin-mozjpeg",
+              "imagemin-pngquant",
+              "imagemin-svgo",
+            ],
+          },
+
+          filter: (source) => {
+            if (source.byteLength >= 8192) {
+              return true;
+            }
+            return false;
+          },
+
+        },
+        generator: [
+          {
+            type: "asset",
+            implementation: ImageMinimizerPlugin.imageminGenerate,
+            options: {
+              plugins: ["imagemin-webp"],
+            },
+          },
+        ],
+      }),
   ]},
 
   module: {
@@ -154,33 +185,12 @@ module.exports = {
       ]
     }),
 
-    // Convert PNG JPG GIF to WEBM format
-    new ImageMinimizerPlugin({
-      test: /\.(png|jpe?g|gif)$/i,
-      deleteOriginalAssets: false,
-      filename: "images/[name].webp",
-      minimizerOptions: {
-        plugins: [["imagemin-webp", { quality: 50 }]],
-      },
-    }),
-
-    // Compress PNG JPG files
-    new ImageMinimizerPlugin({
-      minimizerOptions: {
-        plugins: [
-          ["imagemin-pngquant", { quality: [0.5, 0.65], speed: 5 }],
-          ["imagemin-mozjpeg", { quality: 65, progressive: true }],
-        ],
-      },
-    }),
-
     // Automatic creation any html pages (Don"t forget to RERUN dev server)
     ...PAGES.map(page => new HtmlWebpackPlugin({
       template: `${PAGES_DIR}/${page}`,
       filename: `./${page.replace(/\.pug/, ".html")}`,
       inject: "body"
     })),
-
     new HtmlBeautifyPlugin({
       end_with_newline: true,
       indent_size: 2,
