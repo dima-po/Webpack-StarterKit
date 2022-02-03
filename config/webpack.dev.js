@@ -10,6 +10,7 @@ const miniSVGDataURI = require("mini-svg-data-uri");
 const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 const WorkboxWebpackPlugin = require("workbox-webpack-plugin");
 
+
 // Variables
 const PATHS = {
   src: path.join(__dirname, "../src"),
@@ -47,6 +48,26 @@ module.exports = {
     hot: true
   },
 
+  optimization: {
+    minimizer: [
+      new ImageMinimizerPlugin({
+        deleteOriginalAssets: false,
+        generator: [
+          {
+            preset: "webp",
+            implementation: ImageMinimizerPlugin.imageminGenerate,
+            options: {
+              plugins: [
+                "imagemin-webp",
+                "imagemin-avif"
+              ],
+            },
+          },
+        ],
+      }),
+    ]
+  },
+
   module: {
     rules: [
       {
@@ -75,7 +96,13 @@ module.exports = {
             }
           },
 
-          "css-loader",
+          {
+            loader: "css-loader",
+            options: {
+              url: false
+            }
+          },
+
           "sass-loader"
         ],
       },
@@ -166,16 +193,6 @@ module.exports = {
           }
         },
       ]
-    }),
-
-    // Convert PNG JPG GIF to WEBM format
-    new ImageMinimizerPlugin({
-      test: /\.(png|jpe?g|gif)$/i,
-      deleteOriginalAssets: false,
-      filename: "images/[name].webp",
-      minimizerOptions: {
-        plugins: [["imagemin-webp", { quality: 50 }]],
-      },
     }),
 
     // Automatic creation any html pages (Don"t forget to RERUN dev server)
