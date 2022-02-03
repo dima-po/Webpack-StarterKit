@@ -2,8 +2,10 @@ mixin svg-image(name, className, width, height)
   svg(class= className, width= width, height= height)
     use(xlink:href=`images/sprites.svg#${name}`)
 
+
+//- +image("IMG_20210212_160933", "jpg", "root")(height=100 width=100, alt="Привет Андней")
 mixin image(name, ext, pictureClass)
   picture(class= pictureClass)
-    source(srcset= `${name}.avif` type='image/avif')
-    source(srcset=`${name}.webp` type='image/webp')
-    img(src=`images/${name}.${ext}` class=`${pictureClass}__image`)&attributes(attributes)
+    source(srcset=`images/${name}.${ext}?as=avif` type="image/avif")
+    source(srcset=`images/${name}.${ext}?as=webp` type="image/webp")
+    img(src=`images/${name}.${ext}` class= `${pictureClass}__image`)&attributes(attributes)
