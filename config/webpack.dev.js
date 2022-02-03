@@ -6,6 +6,8 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const SVGSpritemapPlugin = require("svg-spritemap-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const HtmlBeautifyPlugin = require("@sumotto/beautify-html-webpack-plugin");
+const HtmlValidatePlugin = require('html-validate-webpack-plugin');
+const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
 const miniSVGDataURI = require("mini-svg-data-uri");
 const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 const WorkboxWebpackPlugin = require("workbox-webpack-plugin");
@@ -45,7 +47,7 @@ module.exports = {
         errors: false,
       }
     },
-    hot: true
+    hot: true,
   },
 
   optimization: {
@@ -199,8 +201,15 @@ module.exports = {
     ...PAGES.map(page => new HtmlWebpackPlugin({
       template: `${PAGES_DIR}/${page}`,
       filename: `./${page.replace(/\.pug/, ".html")}`,
-      inject: "body"
+      inject: "body",
+      alwaysWriteToDisk: true
     })),
+
+    new HtmlWebpackHarddiskPlugin(),
+
+    new HtmlValidatePlugin({
+      path: "./dist/**/*"
+    }),
 
     new HtmlBeautifyPlugin({
       end_with_newline: true,
@@ -210,6 +219,7 @@ module.exports = {
       preserve_newlines: true,
       unformatted: ["p", "i", "b", "span"]
     }),
+
 
     // new WorkboxWebpackPlugin.InjectManifest({
     //   swSrc: "./src-sw.js",
